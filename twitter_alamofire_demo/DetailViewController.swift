@@ -1,43 +1,48 @@
 //
-//  TweetCell.swift
+//  DetailViewController.swift
 //  twitter_alamofire_demo
 //
-//  Created by Charles Hieger on 6/18/17.
+//  Created by Xueying Wang on 7/5/17.
 //  Copyright © 2017 Charles Hieger. All rights reserved.
 //
 
 import UIKit
 import AlamofireImage
 
-class TweetCell: UITableViewCell {
+class DetailViewController: UIViewController {
     
-    @IBOutlet weak var tweetTextLabel: UILabel!
-    
+    @IBOutlet weak var avatarView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var screenNameLabel: UILabel!
-    @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var authorAvatarView: UIImageView!
-    
+    @IBOutlet weak var tweetTextLabel: UILabel!
+    @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var retweetCountLabel: UILabel!
     @IBOutlet weak var favoriteCountLabel: UILabel!
     
     
-    var tweet: Tweet! {
-        didSet {
-            tweetTextLabel.text = tweet.text
-            nameLabel.text = tweet.user.name
-            screenNameLabel.text = "@" + (tweet.user.screenName ?? "")
-            dateLabel.text = tweet.createdAtString
-            
-            retweetCountLabel.text = "\(tweet.retweetCount ?? 0)"
-            favoriteCountLabel.text = "\(tweet.favoriteCount ?? 0)"
-            authorAvatarView.af_setImage(withURL: tweet.user.avatarURL!)
-            authorAvatarView.clipsToBounds = true
-            authorAvatarView.layer.cornerRadius = 25
-        }
+    var tweet: Tweet!
+    
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view.
+        tweetTextLabel.text = tweet.text
+        nameLabel.text = tweet.user.name
+        screenNameLabel.text = "@" + (tweet.user.screenName ?? "")
+        timeLabel.text = tweet.createdAtString
+        
+        retweetCountLabel.text = "\(tweet.retweetCount ?? 0)"
+        favoriteCountLabel.text = "\(tweet.favoriteCount ?? 0)"
+        avatarView.af_setImage(withURL: tweet.user.avatarURL!)
+        avatarView.clipsToBounds = true
+        avatarView.layer.cornerRadius = 25
     }
-    
-    
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
     
     @IBAction func retweet(_ sender: UIButton) {
         tweet.retweeted = true
@@ -71,25 +76,23 @@ class TweetCell: UITableViewCell {
         tweetTextLabel.text = tweet.text
         nameLabel.text = tweet.user.name
         screenNameLabel.text = "@" + (tweet.user.screenName ?? "")
-        dateLabel.text = tweet.createdAtString
+        timeLabel.text = tweet.createdAtString
         
         retweetCountLabel.text = "\(tweet.retweetCount ?? 0)"
         favoriteCountLabel.text = "\(tweet.favoriteCount ?? 0)"
-        authorAvatarView.af_setImage(withURL: tweet.user.avatarURL!)
-        authorAvatarView.clipsToBounds = true
-        authorAvatarView.layer.cornerRadius = 25
+        avatarView.af_setImage(withURL: tweet.user.avatarURL!)
+        avatarView.clipsToBounds = true
+        avatarView.layer.cornerRadius = 25
     }
-    
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
     }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
-    }
-    
+    */
+
 }
