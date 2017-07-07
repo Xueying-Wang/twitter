@@ -50,15 +50,20 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 ## Video Walkthrough
 
-Here's a walkthrough of implemented user stories:
+Here are walkthroughs of implemented user stories:
 
 <img src='http://i.imgur.com/Ub7iN5N.gif' title='Navigation' width='' alt='Video Walkthrough' />
 
 <img src='http://i.imgur.com/AFOXCxw.gif' title='Compose new Tweet' width='' alt='Video Walkthrough' />
 
-<img src='http://i.imgur.com/zxGnX7f.gif' title='Compose new Tweet' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/zxGnX7f.gif' title='Inifinite loading' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
+
+links:
+http://i.imgur.com/Ub7iN5N.gif
+http://i.imgur.com/AFOXCxw.gif
+http://i.imgur.com/zxGnX7f.gif
 
 ## Notes
 
