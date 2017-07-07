@@ -50,10 +50,10 @@ class User {
         name = dictionary["name"] as? String
         screenName = dictionary["screen_name"] as? String
         avatarURL = URL(string: (dictionary["profile_image_url_https"] as? String)!)
-        if (dictionary["profile_banner_url"] != nil) {
+        if dictionary["profile_banner_url"] != nil {
             backgroundURL = URL(string: (dictionary["profile_banner_url"] as? String)!)
-        } else {
-            backgroundURL = URL(string: (dictionary["profile_background_image_url_https"] as? String)!)
+        } else if let urlString = dictionary["profile_background_image_url_https"] as? String {
+            backgroundURL = URL(string: urlString)
         }
         followers_count = dictionary["followers_count"] as? Int
         following_count = dictionary["friends_count"] as? Int

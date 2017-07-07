@@ -9,7 +9,7 @@
 import UIKit
 import AlamofireImage
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController,TweetCellDelegate, UIGestureRecognizerDelegate {
     
     @IBOutlet weak var avatarView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
@@ -36,12 +36,20 @@ class DetailViewController: UIViewController {
         favoriteCountLabel.text = "\(tweet.favoriteCount ?? 0)"
         avatarView.af_setImage(withURL: tweet.user.avatarURL!)
         avatarView.clipsToBounds = true
-        avatarView.layer.cornerRadius = 25
+        avatarView.layer.cornerRadius = 30
+        
+        let tapped:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(TimelineViewController.didTapProfile(_:)))
+        tapped.numberOfTapsRequired = 1
+        avatarView.addGestureRecognizer(tapped)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func didTapProfile(_ sender: UITapGestureRecognizer){
+        performSegue(withIdentifier: "detailToProfile", sender: nil)
     }
     
     @IBAction func retweet(_ sender: UIButton) {
@@ -83,6 +91,11 @@ class DetailViewController: UIViewController {
         avatarView.af_setImage(withURL: tweet.user.avatarURL!)
         avatarView.clipsToBounds = true
         avatarView.layer.cornerRadius = 25
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let profileViewController = segue.destination as! ProfileViewController
+        profileViewController.user = tweet.user
     }
 
     /*

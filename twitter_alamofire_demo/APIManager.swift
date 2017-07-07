@@ -149,9 +149,10 @@ class APIManager: SessionManager {
     
     
     // Get user's favorited tweets
-    func getUserFavoriteList(completion: @escaping ([Tweet]?, Error?) -> ()) {
+    func getUserFavoriteList(of user: User, completion: @escaping ([Tweet]?, Error?) -> ()) {
         
-        request(URL(string: "https://api.twitter.com/1.1/favorites/list.json")!, method: .get)
+        let parameters = ["screen_name": user.screenName!, "count": 20] as [String : Any]
+        request(URL(string: "https://api.twitter.com/1.1/favorites/list.json")!, method: .get, parameters: parameters)
             .validate()
             .responseJSON { (response) in
                 guard response.result.isSuccess else {
@@ -226,9 +227,10 @@ class APIManager: SessionManager {
     
     
     // MARK: TODO: Get User Timeline
-    func getUserTimeLine(completion: @escaping ([Tweet]?, Error?) -> ()) {
+    func getUserTimeLine(of user: User, completion: @escaping ([Tweet]?, Error?) -> ()) {
         
-        request(URL(string: "https://api.twitter.com/1.1/statuses/user_timeline.json")!, method: .get)
+        let parameters = ["screen_name": user.screenName!, "count": 20] as [String : Any]
+        request(URL(string: "https://api.twitter.com/1.1/statuses/user_timeline.json")!, method: .get, parameters: parameters)
             .validate()
             .responseJSON { (response) in
                 guard response.result.isSuccess else {
@@ -253,26 +255,54 @@ class APIManager: SessionManager {
         }
     }
     
-    func getUserFollowing(completion: @escaping ([User]?, Error?) -> ()) {
-        request(URL(string: "https://api.twitter.com/1.1/friends/list.json")!, method: .get)
+    func getUserFollowing(of user: User, completion: @escaping ([User]?, Error?) -> ()) {
+        let parameters = ["screen_name": user.screenName!]
+        request(URL(string: "https://api.twitter.com/1.1/friends/list.json")!, method: .get, parameters: parameters)
             .validate()
             .responseJSON { (response) in
                 guard response.result.isSuccess else {
                     completion(nil, response.result.error)
                     return
                 }
-                guard let userDictionaries = response.result.value as? [[String: Any]] else {
+                guard let dictionary = response.result.value as? [String: Any], let users = dictionary["users"] as? [[String: Any]] else {
                     print("Failed to parse friends")
                     let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Failed to parse friends"])
                     completion(nil, error)
                     return
                 }
                 
-                let data = NSKeyedArchiver.archivedData(withRootObject: userDictionaries)
+                let data = NSKeyedArchiver.archivedData(withRootObject: users)
                 UserDefaults.standard.set(data, forKey: "userfriends")
                 UserDefaults.standard.synchronize()
                 
-                let followings = userDictionaries.flatMap({ (dictionary) -> User in
+                let followings = users.flatMap({ (dictionary) -> User in
+                    User(dictionary: dictionary)
+                })
+                completion(followings, nil)
+        }
+    }
+    
+    func getUserFollowers(of user: User, completion: @escaping ([User]?, Error?) -> ()) {
+        let parameters = ["screen_name": user.screenName!]
+        request(URL(string: "https://api.twitter.com/1.1/followers/list.json")!, method: .get, parameters: parameters)
+            .validate()
+            .responseJSON { (response) in
+                guard response.result.isSuccess else {
+                    completion(nil, response.result.error)
+                    return
+                }
+                guard let dictionary = response.result.value as? [String: Any], let users = dictionary["users"] as? [[String: Any]] else {
+                    print("Failed to parse friends")
+                    let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Failed to parse friends"])
+                    completion(nil, error)
+                    return
+                }
+                
+                let data = NSKeyedArchiver.archivedData(withRootObject: users)
+                UserDefaults.standard.set(data, forKey: "userfriends")
+                UserDefaults.standard.synchronize()
+                
+                let followings = users.flatMap({ (dictionary) -> User in
                     User(dictionary: dictionary)
                 })
                 completion(followings, nil)

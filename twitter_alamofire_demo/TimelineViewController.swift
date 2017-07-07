@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ComposeViewControllerDelegate {
+class TimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ComposeViewControllerDelegate, TweetCellDelegate, UIGestureRecognizerDelegate {
     
     class InfiniteScrollActivityView: UIView {
         var activityIndicatorView: UIActivityIndicatorView = UIActivityIndicatorView()
@@ -48,6 +48,8 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
 
     
     var tweets: [Tweet] = []
+    
+    var tappedUser: User?
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -144,11 +146,21 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
         
         cell.tweet = tweets[indexPath.row]
         
+        let tapped:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(TimelineViewController.didTapProfile(_:)))
+        tapped.numberOfTapsRequired = 1
+        cell.authorAvatarView.addGestureRecognizer(tapped)
+        cell.authorAvatarView.tag = indexPath.row
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func didTapProfile(_ sender: UITapGestureRecognizer){
+        tappedUser = tweets[sender.view!.tag].user
+        performSegue(withIdentifier: "homeToProfile", sender: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -173,6 +185,10 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
                 let detailViewController = segue.destination as! DetailViewController
                 detailViewController.tweet = tweet
             }
+        }
+        if segue.identifier == "homeToProfile" {
+            let profileViewController = segue.destination as! ProfileViewController
+            profileViewController.user = tappedUser
         }
     }
     

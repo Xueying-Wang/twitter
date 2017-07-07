@@ -9,6 +9,10 @@
 import UIKit
 import AlamofireImage
 
+protocol TweetCellDelegate: class {
+    func didTapProfile (_ sender: UITapGestureRecognizer)
+}
+
 class TweetCell: UITableViewCell {
     
     @IBOutlet weak var tweetTextLabel: UILabel!
@@ -20,6 +24,8 @@ class TweetCell: UITableViewCell {
     
     @IBOutlet weak var retweetCountLabel: UILabel!
     @IBOutlet weak var favoriteCountLabel: UILabel!
+    
+    weak var delegate: TweetCellDelegate!
     
     
     var tweet: Tweet! {
@@ -33,7 +39,7 @@ class TweetCell: UITableViewCell {
             favoriteCountLabel.text = "\(tweet.favoriteCount ?? 0)"
             authorAvatarView.af_setImage(withURL: tweet.user.avatarURL!)
             authorAvatarView.clipsToBounds = true
-            authorAvatarView.layer.cornerRadius = 25
+            authorAvatarView.layer.cornerRadius = 30
         }
     }
     

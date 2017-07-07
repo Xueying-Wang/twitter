@@ -30,31 +30,19 @@ class ProfileViewController: UIViewController,UITableViewDelegate, UITableViewDa
     
     let refreshControl = UIRefreshControl()
     
-    var user: User = User.current!{
-        didSet{
-            nameLabel.text = user.name ?? "user"
-            screenNameLabel.text = "@" + (user.screenName ?? "@user")
-            followingCountLabel.text = "\(user.following_count ?? 0)"
-            followersCountLabel.text = "\(user.followers_count ?? 0)"
-            descriptionLabel.text = user.description
-            backgroundImageView.af_setImage(withURL: user.backgroundURL!)
-            avatarView.af_setImage(withURL: user.avatarURL!)
-            avatarView.clipsToBounds = true
-            avatarView.layer.cornerRadius = 40
-            avatarView.layer.borderColor = UIColor(white: 0.7, alpha: 0.8).cgColor
-            avatarView.layer.borderWidth = 5
-        }
-    }
+    var user: User?
     
     
     func fetchData(){
-        nameLabel.text = user.name ?? "user"
-        screenNameLabel.text = "@" + (user.screenName ?? "@user")
-        followingCountLabel.text = "\(user.following_count ?? 0)"
-        followersCountLabel.text = "\(user.followers_count ?? 0)"
-        descriptionLabel.text = user.description
-        backgroundImageView.af_setImage(withURL: user.backgroundURL!)
-        avatarView.af_setImage(withURL: user.avatarURL!)
+        nameLabel.text = user!.name ?? "user"
+        screenNameLabel.text = "@" + (user!.screenName ?? "@user")
+        followingCountLabel.text = "\(user!.following_count ?? 0)"
+        followersCountLabel.text = "\(user!.followers_count ?? 0)"
+        descriptionLabel.text = user!.description
+        if user!.backgroundURL != nil {
+            backgroundImageView.af_setImage(withURL: user!.backgroundURL!)
+        }
+        avatarView.af_setImage(withURL: user!.avatarURL!)
         avatarView.clipsToBounds = true
         avatarView.layer.cornerRadius = 40
         avatarView.layer.borderColor = UIColor(white: 1, alpha: 1).cgColor
@@ -62,7 +50,7 @@ class ProfileViewController: UIViewController,UITableViewDelegate, UITableViewDa
     }
     
     func fetchTweets(){
-        APIManager.shared.getUserTimeLine { (tweets, error) in
+        APIManager.shared.getUserTimeLine(of: user!) { (tweets, error) in
             if let tweets = tweets {
                 self.timeline = tweets
                 self.tableView.reloadData()
@@ -71,7 +59,7 @@ class ProfileViewController: UIViewController,UITableViewDelegate, UITableViewDa
                 print("Error getting user timeline: " + error.localizedDescription)
             }
         }
-        APIManager.shared.getUserFavoriteList { (tweets, error) in
+        APIManager.shared.getUserFavoriteList(of: user!) { (tweets, error) in
             if let tweets = tweets {
                 self.favorites = tweets
                 self.tableView.reloadData()
@@ -108,10 +96,14 @@ class ProfileViewController: UIViewController,UITableViewDelegate, UITableViewDa
         refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: UIControlEvents.valueChanged)
         tableView.insertSubview(refreshControl, at: 0)
         
+        if user == nil {
+            user = User.current!
+        }
+        
         fetchData()
         fetchTweets()
         
-        APIManager.shared.getUserTimeLine { (tweets, error) in
+        APIManager.shared.getUserTimeLine(of: user!) { (tweets, error) in
             if let tweets = tweets {
                 self.timeline = tweets
                 self.tweets = tweets
@@ -168,6 +160,17 @@ class ProfileViewController: UIViewController,UITableViewDelegate, UITableViewDa
                 detailViewController.tweet = tweet
             }
         }
+        if segue.identifier == "followerSegue" {
+            let navVC = segue.destination as! UINavigationController
+            let followerViewController = navVC.viewControllers.first as! FollowerViewController
+            followerViewController.user = user
+        }
+        if segue.identifier == "followingSegue" {
+            let navVC = segue.destination as! UINavigationController
+            let followingViewController = navVC.viewControllers.first as! FollowingViewController
+            followingViewController.user = user
+        }
+
     }
 
     /*

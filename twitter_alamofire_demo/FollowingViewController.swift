@@ -14,13 +14,22 @@ class FollowingViewController: UIViewController, UITableViewDataSource {
     
     let refreshControl = UIRefreshControl()
     
+    var user: User?
+    
     var following: [User] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if user == nil {
+            user = User.current!
+        }
 
         // Do any additional setup after loading the view.
         tableView.dataSource = self
+        
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 100
         
         refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: UIControlEvents.valueChanged)
         tableView.insertSubview(refreshControl, at: 0)
@@ -42,7 +51,7 @@ class FollowingViewController: UIViewController, UITableViewDataSource {
     }
     
     func fetchData(){
-        APIManager.shared.getUserFollowing { (friends, error) in
+        APIManager.shared.getUserFollowing(of: user!) { (friends, error) in
             if let friends = friends {
                 
                 self.following = friends
@@ -68,6 +77,15 @@ class FollowingViewController: UIViewController, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let cell = sender as! UITableViewCell
+        if let indexPath = tableView.indexPath(for: cell){
+            let user = following[indexPath.row]
+            let profileViewController = segue.destination as! ProfileViewController
+            profileViewController.user = user
+        }
     }
 
 

@@ -2,7 +2,7 @@
 
 **Twitter** is a basic twitter app to read and compose tweets the [Twitter API](https://apps.twitter.com/).
 
-Time spent: **9** hours spent in total
+Time spent: **11** hours spent in total
 
 ## User Stories
 
@@ -26,10 +26,10 @@ The following **optional** features are implemented:
 - [ ] User should display the relative timestamp for each tweet "8m", "7h"
 - [ ] User should be able to unretweet and unfavorite and should decrement the retweet and favorite count.
 - [ ] Links in tweets are clickable
-- [ ] User can tap the profile image in any tweet to see another user's profile
-- [x] Contains the user header view: picture and tagline
-- [x] Contains a section with the users basic stats: # tweets, # following, # followers
-- [x] Profile view should include that user's timeline
+- [x] User can tap the profile image in any tweet to see another user's profile
+    - [x] Contains the user header view: picture and tagline
+    - [x] Contains a section with the users basic stats: # tweets, # following, # followers
+    - [x] Profile view should include that user's timeline
 - [x] User can load more tweets once they reach the bottom of the feed using infinite loading similar to the actual Twitter client.
 - [ ] When composing, you should have a countdown in the upper right for the tweet limit.
 - [x] After creating a new tweet, a user should be able to view it in the timeline immediately without refetching the timeline from the network.
@@ -41,23 +41,30 @@ The following **additional** features are implemented:
 
 - [x] List anything else that you can get done to improve the app functionality!
 - [x] Add segmented control in profile so that user can switch between user timeline and favorites
+- [x] User can view lists of followers and friends from profile view
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
-1.
-2.
+1. Displaying relative timestamps
+2. Replying to tweets
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/Ub7iN5N.gif' title='Navigation' width='' alt='Video Walkthrough' />
+
+<img src='http://i.imgur.com/AFOXCxw.gif' title='Compose new Tweet' width='' alt='Video Walkthrough' />
+
+<img src='http://i.imgur.com/zxGnX7f.gif' title='Compose new Tweet' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
 Describe any challenges encountered while building the app.
+- Adding tap gesture recognizer on imageView and segue to profile view
+- Parsing lists of followers and friends
 
 ## Credits
 
@@ -67,7 +74,7 @@ List an 3rd party libraries, icons, graphics, or other assets you used in your a
 
 ## License
 
-Copyright [yyyy] [name of copyright owner]
+Copyright [Xueying Wang] [name of copyright owner]
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

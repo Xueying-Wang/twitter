@@ -22,11 +22,11 @@ class FollowCell: UITableViewCell {
     var user: User!{
         didSet{
             nameLabel.text = user.name
-            screenNameLabel.text = user.screenName
+            screenNameLabel.text = "@" + (user.screenName ?? "user")
             descriptionLabel.text = user.description
             avatarView.af_setImage(withURL: user.avatarURL!)
             avatarView.clipsToBounds = true
-            avatarView.layer.cornerRadius = 25
+            avatarView.layer.cornerRadius = 20
         }
     }
     
