@@ -13,6 +13,10 @@ class User {
     var name: String?
     var screenName: String?
     var avatarURL: URL?
+    var backgroundURL: URL?
+    var followers_count: Int?
+    var following_count: Int?
+    var description: String?
     
     var dictionary: [String: Any]?
     
@@ -46,5 +50,13 @@ class User {
         name = dictionary["name"] as? String
         screenName = dictionary["screen_name"] as? String
         avatarURL = URL(string: (dictionary["profile_image_url_https"] as? String)!)
+        if (dictionary["profile_banner_url"] != nil) {
+            backgroundURL = URL(string: (dictionary["profile_banner_url"] as? String)!)
+        } else {
+            backgroundURL = URL(string: (dictionary["profile_background_image_url_https"] as? String)!)
+        }
+        followers_count = dictionary["followers_count"] as? Int
+        following_count = dictionary["friends_count"] as? Int
+        description = dictionary["description"] as? String ?? ""
     }
 }

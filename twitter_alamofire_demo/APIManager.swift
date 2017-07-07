@@ -119,6 +119,63 @@ class APIManager: SessionManager {
         }
     }
     
+    //Get new tweets for home timeline when scrolling down
+    func getNewHomeTimeLine(tweetID: Int64, completion: @escaping ([Tweet]?, Error?) -> ()){
+        let parameters = ["max_id": tweetID]
+        request(URL(string: "https://api.twitter.com/1.1/statuses/home_timeline.json")!, method: .get, parameters: parameters)
+            .validate()
+            .responseJSON { (response) in
+                guard response.result.isSuccess else {
+                    completion(nil, response.result.error)
+                    return
+                }
+                guard let tweetDictionaries = response.result.value as? [[String: Any]] else {
+                    print("Failed to parse tweets")
+                    let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Failed to parse tweets"])
+                    completion(nil, error)
+                    return
+                }
+                
+                let data = NSKeyedArchiver.archivedData(withRootObject: tweetDictionaries)
+                UserDefaults.standard.set(data, forKey: "hometimeline_tweets")
+                UserDefaults.standard.synchronize()
+                
+                let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
+                    Tweet(dictionary: dictionary)
+                })
+                completion(tweets, nil)
+        }
+    }
+    
+    
+    // Get user's favorited tweets
+    func getUserFavoriteList(completion: @escaping ([Tweet]?, Error?) -> ()) {
+        
+        request(URL(string: "https://api.twitter.com/1.1/favorites/list.json")!, method: .get)
+            .validate()
+            .responseJSON { (response) in
+                guard response.result.isSuccess else {
+                    completion(nil, response.result.error)
+                    return
+                }
+                guard let tweetDictionaries = response.result.value as? [[String: Any]] else {
+                    print("Failed to parse tweets")
+                    let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Failed to parse tweets"])
+                    completion(nil, error)
+                    return
+                }
+                
+                let data = NSKeyedArchiver.archivedData(withRootObject: tweetDictionaries)
+                UserDefaults.standard.set(data, forKey: "usertimeline_tweets")
+                UserDefaults.standard.synchronize()
+                
+                let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
+                    Tweet(dictionary: dictionary)
+                })
+                completion(tweets, nil)
+        }
+    }
+    
     // MARK: TODO: Favorite a Tweet
     func favorite(_ tweet: Tweet, completion: @escaping (Tweet?, Error?) -> ()) {
         let urlString = "https://api.twitter.com/1.1/favorites/create.json"
@@ -169,7 +226,59 @@ class APIManager: SessionManager {
     
     
     // MARK: TODO: Get User Timeline
+    func getUserTimeLine(completion: @escaping ([Tweet]?, Error?) -> ()) {
+        
+        request(URL(string: "https://api.twitter.com/1.1/statuses/user_timeline.json")!, method: .get)
+            .validate()
+            .responseJSON { (response) in
+                guard response.result.isSuccess else {
+                    completion(nil, response.result.error)
+                    return
+                }
+                guard let tweetDictionaries = response.result.value as? [[String: Any]] else {
+                    print("Failed to parse tweets")
+                    let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Failed to parse tweets"])
+                    completion(nil, error)
+                    return
+                }
+                
+                let data = NSKeyedArchiver.archivedData(withRootObject: tweetDictionaries)
+                UserDefaults.standard.set(data, forKey: "usertimeline_tweets")
+                UserDefaults.standard.synchronize()
+                
+                let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
+                    Tweet(dictionary: dictionary)
+                })
+                completion(tweets, nil)
+        }
+    }
     
+    func getUserFollowing(completion: @escaping ([User]?, Error?) -> ()) {
+        request(URL(string: "https://api.twitter.com/1.1/friends/list.json")!, method: .get)
+            .validate()
+            .responseJSON { (response) in
+                guard response.result.isSuccess else {
+                    completion(nil, response.result.error)
+                    return
+                }
+                guard let userDictionaries = response.result.value as? [[String: Any]] else {
+                    print("Failed to parse friends")
+                    let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Failed to parse friends"])
+                    completion(nil, error)
+                    return
+                }
+                
+                let data = NSKeyedArchiver.archivedData(withRootObject: userDictionaries)
+                UserDefaults.standard.set(data, forKey: "userfriends")
+                UserDefaults.standard.synchronize()
+                
+                let followings = userDictionaries.flatMap({ (dictionary) -> User in
+                    User(dictionary: dictionary)
+                })
+                completion(followings, nil)
+        }
+    }
+
     
     //--------------------------------------------------------------------------------//
     

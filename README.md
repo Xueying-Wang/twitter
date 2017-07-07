@@ -2,7 +2,7 @@
 
 **Twitter** is a basic twitter app to read and compose tweets the [Twitter API](https://apps.twitter.com/).
 
-Time spent: **6** hours spent in total
+Time spent: **9** hours spent in total
 
 ## User Stories
 
@@ -22,24 +22,25 @@ The following **required** functionality is completed:
 The following **optional** features are implemented:
 
 - [x] Tweet Details Page: User can tap on a tweet to view it, with controls to retweet, favorite, and reply.
-- [ ] User can view their profile in a profile tab
+- [x] User can view their profile in a profile tab
 - [ ] User should display the relative timestamp for each tweet "8m", "7h"
 - [ ] User should be able to unretweet and unfavorite and should decrement the retweet and favorite count.
 - [ ] Links in tweets are clickable
 - [ ] User can tap the profile image in any tweet to see another user's profile
-- [ ] Contains the user header view: picture and tagline
-- [ ] Contains a section with the users basic stats: # tweets, # following, # followers
-- [ ] Profile view should include that user's timeline
-- [ ] User can load more tweets once they reach the bottom of the feed using infinite loading similar to the actual Twitter client.
+- [x] Contains the user header view: picture and tagline
+- [x] Contains a section with the users basic stats: # tweets, # following, # followers
+- [x] Profile view should include that user's timeline
+- [x] User can load more tweets once they reach the bottom of the feed using infinite loading similar to the actual Twitter client.
 - [ ] When composing, you should have a countdown in the upper right for the tweet limit.
-- [ ] After creating a new tweet, a user should be able to view it in the timeline immediately without refetching the timeline from the network.
+- [x] After creating a new tweet, a user should be able to view it in the timeline immediately without refetching the timeline from the network.
 - [ ] User can reply to any tweet, and replies should be prefixed with the username and the reply_id should be set when posting the tweet
-- [ ] Profile view should include that user's timeline
+- [x] Profile view should include that user's timeline
 - [ ] Pulling down the profile page should blur and resize the header image.
 
 The following **additional** features are implemented:
 
-- [ ] List anything else that you can get done to improve the app functionality!
+- [x] List anything else that you can get done to improve the app functionality!
+- [x] Add segmented control in profile so that user can switch between user timeline and favorites
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 

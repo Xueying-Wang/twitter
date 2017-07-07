@@ -10,14 +10,97 @@ import UIKit
 
 class TimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ComposeViewControllerDelegate {
     
+    class InfiniteScrollActivityView: UIView {
+        var activityIndicatorView: UIActivityIndicatorView = UIActivityIndicatorView()
+        static let defaultHeight:CGFloat = 40
+        
+        required init?(coder aDecoder: NSCoder) {
+            super.init(coder: aDecoder)
+            setupActivityIndicator()
+        }
+        
+        override init(frame aRect: CGRect) {
+            super.init(frame: aRect)
+            setupActivityIndicator()
+        }
+        
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            activityIndicatorView.center = CGPoint(x: self.bounds.size.width/2, y: self.bounds.size.height/2)
+        }
+        
+        func setupActivityIndicator() {
+            activityIndicatorView.activityIndicatorViewStyle = .gray
+            activityIndicatorView.hidesWhenStopped = true
+            self.addSubview(activityIndicatorView)
+        }
+        
+        func stopAnimating() {
+            self.activityIndicatorView.stopAnimating()
+            self.isHidden = true
+        }
+        
+        func startAnimating() {
+            self.isHidden = false
+            self.activityIndicatorView.startAnimating()
+        }
+    }
+
+    
     var tweets: [Tweet] = []
     
     @IBOutlet weak var tableView: UITableView!
     
     let refreshControl = UIRefreshControl()
     
+    var isMoreDataLoading = false
+    var loadingMoreView:InfiniteScrollActivityView?
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (!isMoreDataLoading){
+            let scrollViewContentHeight = tableView.contentSize.height
+            let scrollOffsetThreshold = scrollViewContentHeight - tableView.bounds.size.height
+            
+            if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView.isDragging) {
+                isMoreDataLoading = true
+                
+                // Update position of loadingMoreView, and start loading indicator
+                let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+                loadingMoreView?.frame = frame
+                loadingMoreView!.startAnimating()
+                
+                APIManager.shared.getNewHomeTimeLine(tweetID: self.tweets[tweets.count - 1].id, completion: { (tweets, error) in
+                    if let tweets = tweets {
+                        self.isMoreDataLoading = false
+                        
+                        // Stop the loading indicator
+                        self.loadingMoreView!.stopAnimating()
+                        
+                        self.tweets += tweets
+                        self.tableView.reloadData()
+                        self.refreshControl.endRefreshing()
+                    } else if let error = error {
+                        print("Error getting home timeline: " + error.localizedDescription)
+                    }
+                })
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.contentInset.bottom = 0
+        
+        // Set up Infinite Scroll loading indicator
+        let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+        loadingMoreView = InfiniteScrollActivityView(frame: frame)
+        loadingMoreView!.isHidden = true
+        tableView.addSubview(loadingMoreView!)
+        
+        var insets = tableView.contentInset
+        insets.bottom += InfiniteScrollActivityView.defaultHeight
+        tableView.contentInset = insets
+
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -34,6 +117,11 @@ class TimelineViewController: UIViewController, UITableViewDelegate, UITableView
     func fetchData(){
         APIManager.shared.getHomeTimeLine { (tweets, error) in
             if let tweets = tweets {
+                self.isMoreDataLoading = false
+                
+                // Stop the loading indicator
+                self.loadingMoreView!.stopAnimating()
+                
                 self.tweets = tweets
                 self.tableView.reloadData()
                 self.refreshControl.endRefreshing()
